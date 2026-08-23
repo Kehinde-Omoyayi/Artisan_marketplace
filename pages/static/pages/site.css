@@ -1,0 +1,204 @@
+/* ===========================================================================
+   Design tokens
+   Palette drawn from Nigerian market/textile colour: adire indigo, marigold,
+   baked clay, cassava-leaf green, plaster sand. Two display moments only —
+   the hero "signboard" and section eyebrows — everything else stays quiet.
+   =========================================================================== */
+:root {
+  --ink: #1c140b;
+  --indigo: #16233f;
+  --indigo-2: #223159;
+  --indigo-3: #2c3f6e;
+  --sand: #f6eedd;
+  --paper: #fffbf3;
+  --marigold: #e8a339;
+  --marigold-dark: #c8842a;
+  --clay: #b6552c;
+  --leaf: #2f6b4f;
+  --line: rgba(28, 20, 11, 0.12);
+  --line-light: rgba(255, 251, 243, 0.18);
+
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Work Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  --radius: 14px;
+  --radius-sm: 8px;
+  --shadow-soft: 0 12px 32px rgba(22, 35, 63, 0.16);
+  --shadow-lift: 0 18px 40px rgba(22, 35, 63, 0.28);
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--paper);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0 0 0.5em; line-height: 1.12; }
+p { margin: 0 0 1em; }
+a { color: inherit; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+
+:focus-visible {
+  outline: 3px solid var(--marigold);
+  outline-offset: 2px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.98rem;
+  padding: 0.85em 1.5em;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn-accent { background: var(--marigold); color: var(--ink); box-shadow: var(--shadow-soft); }
+.btn-accent:hover { background: var(--marigold-dark); }
+.btn-ghost-light { background: transparent; color: var(--paper); border-color: var(--line-light); }
+.btn-ghost-light:hover { background: rgba(255, 251, 243, 0.08); }
+.btn-small { padding: 0.55em 1.1em; font-size: 0.88rem; }
+
+/* ---------- Header ---------- */
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.1rem 1.5rem;
+  background: var(--indigo);
+  color: var(--paper);
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+.brand { display: flex; align-items: center; gap: 0.6em; text-decoration: none; color: var(--paper); }
+.brand-mark {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 0.82rem;
+  background: var(--marigold);
+  color: var(--ink);
+  padding: 0.35em 0.55em;
+  border-radius: 6px;
+  letter-spacing: 0.02em;
+}
+.brand-name { font-weight: 600; font-size: 0.98rem; }
+
+/* ---------- Hero ---------- */
+.hero {
+  background: radial-gradient(120% 160% at 15% -10%, var(--indigo-3) 0%, var(--indigo) 55%);
+  color: var(--paper);
+  padding: 4.5rem 1.5rem 6rem;
+}
+.hero-inner { max-width: 760px; margin: 0 auto; text-align: center; }
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--marigold);
+  margin-bottom: 1.4rem;
+}
+.eyebrow-dark { color: var(--clay); }
+
+.signboard {
+  display: inline-block;
+  transform: rotate(-1.4deg);
+  background: var(--indigo-2);
+  border: 3px solid var(--marigold);
+  border-radius: var(--radius);
+  padding: 1.1em 1.3em;
+  box-shadow: var(--shadow-lift);
+  margin-bottom: 1.6rem;
+}
+.signboard h1 {
+  font-size: clamp(2rem, 5vw, 3.1rem);
+  color: var(--paper);
+  margin: 0;
+}
+.signboard h1 em { color: var(--marigold); font-style: italic; }
+
+.hero-sub { font-size: 1.08rem; color: rgba(255, 251, 243, 0.86); max-width: 560px; margin: 0 auto 2rem; }
+.hero-actions { display: flex; gap: 0.9rem; justify-content: center; flex-wrap: wrap; margin-bottom: 2.2rem; }
+
+.pill-row { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; }
+.pill {
+  font-size: 0.84rem;
+  padding: 0.4em 0.95em;
+  border-radius: 999px;
+  border: 1px solid var(--line-light);
+  color: rgba(255, 251, 243, 0.82);
+}
+
+/* ---------- Sections ---------- */
+.section { padding: 5rem 1.5rem; }
+.section-sand { background: var(--sand); }
+.section-indigo { background: var(--indigo); color: var(--paper); }
+.section-inner { max-width: 1040px; margin: 0 auto; }
+.section-inner-split { max-width: 720px; }
+.section-title { font-size: clamp(1.6rem, 3vw, 2.2rem); }
+.section-title-light { color: var(--paper); }
+.section-body { font-size: 1.02rem; color: rgba(255, 251, 243, 0.86); max-width: 560px; }
+
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 2.5rem; }
+.step { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.8rem; }
+.step-number {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 2.2rem; height: 2.2rem;
+  font-family: var(--font-mono); font-weight: 600;
+  background: var(--marigold); color: var(--ink);
+  border-radius: 50%; margin-bottom: 1rem;
+}
+.step h3 { font-size: 1.15rem; margin-bottom: 0.4em; }
+.step p { color: rgba(28, 20, 11, 0.72); font-size: 0.96rem; margin: 0; }
+
+.ladder { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1.5rem 0 2rem; }
+.ladder-step {
+  font-family: var(--font-mono); font-size: 0.78rem;
+  padding: 0.5em 0.9em; border-radius: var(--radius-sm);
+  background: rgba(255, 251, 243, 0.08); border: 1px solid var(--line-light);
+  color: rgba(255, 251, 243, 0.85);
+}
+
+.trust-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 2.5rem; }
+.trust-card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.8rem; }
+.trust-card h3 { font-size: 1.08rem; margin-bottom: 0.5em; color: var(--clay); }
+.trust-card p { color: rgba(28, 20, 11, 0.72); font-size: 0.95rem; margin: 0; }
+
+/* ---------- Footer ---------- */
+.site-footer { background: var(--indigo); color: rgba(255, 251, 243, 0.8); padding: 3.5rem 1.5rem 2rem; }
+.footer-inner { max-width: 1040px; margin: 0 auto; display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 2.5rem; }
+.footer-brand { display: flex; flex-direction: column; gap: 0.8rem; }
+.footer-brand p { font-size: 0.9rem; color: rgba(255, 251, 243, 0.65); margin: 0; }
+.footer-categories h4, .footer-meta h4 {
+  font-family: var(--font-mono); font-size: 0.76rem; text-transform: uppercase;
+  letter-spacing: 0.06em; color: var(--marigold); margin-bottom: 0.9em;
+}
+.footer-categories li, .footer-meta li { font-size: 0.88rem; padding: 0.25em 0; color: rgba(255, 251, 243, 0.72); }
+.footer-copy { max-width: 1040px; margin: 2.5rem auto 0; font-size: 0.8rem; color: rgba(255, 251, 243, 0.45); border-top: 1px solid var(--line-light); padding-top: 1.5rem; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 860px) {
+  .steps, .trust-grid { grid-template-columns: 1fr; }
+  .footer-inner { grid-template-columns: 1fr; }
+  .hero { padding: 3.5rem 1.2rem 4.5rem; }
+  .section { padding: 3.5rem 1.2rem; }
+}

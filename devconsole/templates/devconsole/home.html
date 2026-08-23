@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+{% csrf_token %}
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Artisan Marketplace V2 — Test Console</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0b1020; --panel:#131a2e; --panel2:#1a2340; --line:#26304d;
+    --text:#e8ecf7; --dim:#9aa6c4; --green:#34d399; --red:#f87171;
+    --amber:#fbbf24; --blue:#60a5fa; --purple:#a78bfa;
+  }
+  body{background:var(--bg);color:var(--text);font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;padding:24px}
+  .wrap{max-width:1400px;margin:0 auto}
+  header{margin-bottom:22px;border-bottom:1px solid var(--line);padding-bottom:18px}
+  h1{font-size:25px;letter-spacing:-.4px;margin-bottom:6px}
+  h1 span{color:var(--blue)}
+  .sub{color:var(--dim);font-size:14px}
+  .banner{margin-top:14px;background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.35);color:#fde68a;padding:9px 13px;border-radius:8px;font-size:13px}
+  .grid{display:grid;grid-template-columns:390px 1fr;gap:20px;align-items:start}
+  @media(max-width:1000px){
+  .grid{grid-template-columns:1fr}
+}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:17px;margin-bottom:16px}
+  .card h2{font-size:12px;text-transform:uppercase;letter-spacing:.9px;color:var(--dim);margin-bottom:13px;font-weight:600}
+  .step{display:flex;gap:9px;align-items:baseline;margin-bottom:9px}
+  .num{width:20px;height:20px;flex:0 0 20px;border-radius:50%;background:var(--panel2);border:1px solid var(--line);color:var(--blue);font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700}
+  .desc{font-size:12.5px;color:var(--dim);margin:-4px 0 9px 29px;line-height:1.45}
+  button{width:100%;background:var(--panel2);color:var(--text);border:1px solid var(--line);padding:9px 13px;border-radius:8px;font-size:13.5px;font-weight:600;cursor:pointer;transition:.13s;text-align:left;font-family:inherit}
+  button:hover:not(:disabled){background:#233053;border-color:#3b4a75;transform:translateX(2px)}
+  button:disabled{opacity:.5;cursor:wait}
+  button.go{background:linear-gradient(135deg,#2563eb,#4f46e5);border-color:#4f46e5}
+  button.go:hover:not(:disabled){background:linear-gradient(135deg,#1d4ed8,#4338ca)}
+  button.danger{color:#fca5a5}
+  button.danger:hover:not(:disabled){background:rgba(248,113,113,.13);border-color:#7f1d1d}
+  .row{display:flex;gap:8px;margin-bottom:9px;flex-wrap:wrap}
+  .row>*{flex:1;min-width:0}
+  label{display:block;font-size:11px;color:var(--dim);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+  select,input{width:100%;background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:7px;padding:7px 9px;font-size:13px;font-family:inherit}
+  .stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:7px}
+  .stat{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+  .stat .n{font-size:19px;font-weight:700;color:var(--blue);font-variant-numeric:tabular-nums}
+  .stat .l{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.4px;margin-top:1px}
+  #log{background:#080c18;border:1px solid var(--line);border-radius:12px;padding:15px;height:560px;overflow-y:auto;font:12.6px/1.6 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+  .ev{display:flex;gap:9px;padding:5px 0;border-bottom:1px solid rgba(38,48,77,.42);animation:in .2s ease}
+  @keyframes in{
+    from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}
+  }
+  .ic{flex:0 0 15px;font-weight:700}
+  .ok .ic{color:var(--green)} .no .ic{color:var(--red)} .info .ic{color:var(--dim)}
+  .ev .m{flex:1;min-width:0;word-break:break-word}
+  .ev .d{color:var(--dim);font-size:11.6px;margin-top:2px}
+  .hdr{color:var(--purple);font-weight:700;padding:13px 0 5px;border-bottom:1px solid var(--line);margin-bottom:4px;font-size:12px;text-transform:uppercase;letter-spacing:.8px}
+  .hdr:first-child{padding-top:0}
+  .empty{color:var(--dim);text-align:center;padding:44px 20px;font-style:italic}
+  table{width:100%;border-collapse:collapse;font-size:12.4px}
+  th{text-align:left;color:var(--dim);font-size:10px;text-transform:uppercase;letter-spacing:.5px;padding:5px 7px;border-bottom:1px solid var(--line);font-weight:600}
+  td{padding:5px 7px;border-bottom:1px solid rgba(38,48,77,.4);font-variant-numeric:tabular-nums}
+  .pill{display:inline-block;padding:1px 7px;border-radius:20px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+  .p-paid,.p-approved,.p-sent{background:rgba(52,211,153,.16);color:var(--green)}
+  .p-pending_approval,.p-processing,.p-open{background:rgba(251,191,36,.16);color:var(--amber)}
+  .p-failed{background:rgba(248,113,113,.16);color:var(--red)}
+  .tabs{display:flex;gap:5px;margin-bottom:12px;flex-wrap:wrap}
+  .tab{padding:5px 12px;border-radius:7px;background:var(--panel2);border:1px solid var(--line);cursor:pointer;font-size:12px;font-weight:600;width:auto;flex:0 0 auto}
+  .tab.on{background:var(--blue);border-color:var(--blue);color:#04122b}
+  .hide{display:none}
+  .spin{display:inline-block;width:11px;height:11px;border:2px solid var(--line);border-top-color:var(--blue);border-radius:50%;animation:sp .7s linear infinite;vertical-align:-1px}
+  @keyframes sp{
+    to{transform:rotate(360deg)}
+  }
+  a{color:var(--blue)}
+  .foot{margin-top:18px;color:var(--dim);font-size:12px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Nigeria Artisan Marketplace — <span>V2 Test Console</span></h1>
+    <div class="sub">Drives the real code paths: signed webhooks, PostGIS matching, the payout threshold, and all four non-negotiable rules.</div>
+    <div class="banner">
+      <strong>Dev/staging only.</strong> Gated behind <code>ENABLE_DEV_CONSOLE</code> (default off) and requires a logged-in staff account (same as /admin/) — leaving the flag on by accident does not expose this publicly.
+      Only two network edges are stubbed — Meta's send API and Paystack's HTTP calls — so no real money moves and no Meta account is needed. Every signature check runs for real.
+    </div>
+  </header>
+
+  <div class="grid">
+    <div>
+      <div class="card">
+        <h2>Run the full journey</h2>
+        <div class="row">
+          <div><label>Category</label><select id="cat"><option>Plumbing</option><option>Electrical</option><option>Carpentry</option><option>Cleaning</option></select></div>
+          <div><label>Customer area</label><select id="area">{% for a in areas %}<option>{{ a }}</option>{% endfor %}</select></div>
+        </div>
+        <button class="go" onclick="runAll()">▶ Run everything, in order</button>
+        <div class="desc" style="margin:8px 0 0 0">Seeds artisans → customer journey → artisan onboarding → verification → money → dispute → security probe.</div>
+      </div>
+
+      <div class="card">
+        <h2>Or step through it</h2>
+
+        <div class="step"><div class="num">1</div><button onclick="call('/dev/seed-artisans/',{category:cat.value})">Seed 6 artisans across Lagos</button></div>
+        <div class="desc">Different ratings, job counts, verification levels and distances — including one in Ibadan to prove the 15 km radius filter works.</div>
+
+        <div class="step"><div class="num">2</div><button onclick="call('/dev/customer-journey/',{category:cat.value,area:area.value,timing:'Today'})">Customer journey → PostGIS match</button></div>
+        <div class="desc">Five signed WhatsApp webhook POSTs: greeting → category → area → location pin → timing. Then the real ranking engine runs and ranks candidates.</div>
+
+        <div class="step"><div class="num">3</div><button onclick="call('/dev/artisan-onboarding/',{category:cat.value,area:'Surulere'})">Artisan self-onboarding + ID</button></div>
+        <div class="desc">Texts ARTISAN, picks a category, shares a pin, uploads an ID photo → a pending L2 VerificationDocument.</div>
+
+        <div class="step"><div class="num">4</div><button onclick="call('/dev/approve-verification/')">Staff approves pending IDs</button></div>
+        <div class="desc">Runs the real admin action: raises verification_level and writes an audit row.</div>
+
+        <div class="step"><div class="num">5</div>
+          <div style="display:flex;gap:7px;width:100%">
+            <input id="naira" value="20000" style="flex:0 0 96px" title="Booking amount in naira">
+            <button onclick="call('/dev/money-flow/',{naira:naira.value})">Booking → payout → transfer</button>
+          </div>
+        </div>
+        <div class="desc">Under ₦50,000 auto-approves. ₦50,000 or more is held for finance_staff. Then a correctly signed <code>transfer.success</code> webhook marks it paid.
+          <strong style="color:var(--amber)">Try 20000, then 75000.</strong></div>
+
+        <div class="step"><div class="num">6</div><button onclick="call('/dev/raise-dispute/',{reason:'not_completed'})">Customer raises a dispute</button></div>
+        <div class="desc">Freezes any non-final payout back to pending_approval and opens a high-priority support case.</div>
+
+        <div class="step"><div class="num">7</div><button onclick="call('/dev/security-probe/')">Attack the webhooks</button></div>
+        <div class="desc">Sends unsigned and forged-signature requests to both webhooks. Every one must be rejected with 401.</div>
+
+        <div class="step"><div class="num">8</div><button onclick="call('/dev/infra/')">Infrastructure &amp; config check</button></div>
+        <div class="desc">PostGIS, Redis, Celery, FeeConfig, Beat schedule, RBAC groups, storage, DEBUG.</div>
+      </div>
+
+      <div class="card">
+        <h2>Elsewhere</h2>
+        <div class="row">
+          <a href="/admin/" target="_blank"><button>Django admin ↗</button></a>
+          <a href="/healthz/" target="_blank"><button>/healthz ↗</button></a>
+        </div>
+        <div class="desc" style="margin-left:0">admin / admin12345</div>
+        <button class="danger" onclick="if(confirm('Delete all demo data?'))call('/dev/reset/')">Reset demo data</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <h2>Live database state</h2>
+        <div class="stats" id="stats"></div>
+      </div>
+
+      <div class="card">
+        <h2>Activity log</h2>
+        <div id="log"><div class="empty">Run a scenario to see what the backend actually does.</div></div>
+      </div>
+
+      <div class="card">
+        <h2>Data explorer</h2>
+        <div class="tabs">
+          <button class="tab on" onclick="tab('matches',this)">Matches &amp; ranking</button>
+          <button class="tab" onclick="tab('payouts',this)">Payouts</button>
+          <button class="tab" onclick="tab('bookings',this)">Bookings</button>
+          <button class="tab" onclick="tab('notifications',this)">Notifications</button>
+          <button class="tab" onclick="tab('audit',this)">Audit log</button>
+        </div>
+        <div id="tables"></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot">Not part of the V2 manual — an addition for verifying it. Delete <code>devconsole/</code> before production, or simply leave <code>ENABLE_DEV_CONSOLE</code> unset.</div>
+</div>
+
+<script>
+const logEl=document.getElementById('log'); let first=true, curTab='matches', cache={};
+
+function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+function header(t){
+  if(first){logEl.innerHTML='';first=false}
+  const d=document.createElement('div');d.className='hdr';d.textContent=t;logEl.appendChild(d);logEl.scrollTop=logEl.scrollHeight;
+}
+function event(e){
+  if(first){logEl.innerHTML='';first=false}
+  const d=document.createElement('div');
+  const cls=e.ok===true?'ok':(e.ok===false?'no':'info');
+  const icon=e.ok===true?'✓':(e.ok===false?'✕':'·');
+  d.className='ev '+cls;
+  d.innerHTML='<div class="ic">'+icon+'</div><div class="m">'+esc(e.message)+
+              (e.detail?'<div class="d">'+esc(e.detail)+'</div>':'')+'</div>';
+  logEl.appendChild(d);logEl.scrollTop=logEl.scrollHeight;
+}
+function stats(s){
+  document.getElementById('stats').innerHTML=Object.entries(s.counts)
+    .map(([k,v])=>`<div class="stat"><div class="n">${v}</div><div class="l">${esc(k)}</div></div>`).join('');
+}
+async function call(url,body,label){
+  const btns=[...document.querySelectorAll('button')];btns.forEach(b=>b.disabled=true);
+  header((label||url.replace(/\/dev\/|\//g,' ').trim()).toUpperCase());
+  try{
+    const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body||{})});
+    const j=await r.json();
+    (j.events||[]).forEach(event);
+    if(j.state)stats(j.state);
+    await refresh();
+    return j;
+  }catch(err){event({ok:false,message:'Request failed',detail:String(err)})}
+  finally{btns.forEach(b=>b.disabled=false)}
+}
+async function runAll(){
+  logEl.innerHTML='';first=true;
+  const c=cat.value,a=area.value;
+  await call('/dev/reset/',{},'reset');
+  await call('/dev/seed-artisans/',{category:c},'1 · seed artisans');
+  await call('/dev/customer-journey/',{category:c,area:a,timing:'Today'},'2 · customer journey');
+  await call('/dev/artisan-onboarding/',{category:c,area:'Surulere'},'3 · artisan onboarding');
+  await call('/dev/approve-verification/',{},'4 · verification approval');
+  await call('/dev/money-flow/',{naira:'20000'},'5a · payout below threshold (auto)');
+  await call('/dev/money-flow/',{naira:'75000'},'5b · payout above threshold (held)');
+  await call('/dev/raise-dispute/',{reason:'not_completed'},'6 · dispute freeze');
+  await call('/dev/security-probe/',{},'7 · security probe');
+  await call('/dev/infra/',{},'8 · infrastructure');
+  header('DONE');
+  event({ok:true,message:'Full journey complete.',detail:'Explore the tables below, or open /admin to inspect every row.'});
+}
+function tab(name,el){
+  curTab=name;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  draw();
+}
+function draw(){
+  const rows=cache[curTab]||[];
+  const box=document.getElementById('tables');
+  if(!rows.length){box.innerHTML='<div class="empty">No rows yet.</div>';return}
+  const cols={
+    matches:[['rank','#'],['artisan','Artisan'],['distance_km','Distance km'],['score','Score'],['version','Ver'],['request','Request']],
+    payouts:[['id','ID'],['artisan','Artisan'],['naira','Amount ₦'],['status','Status']],
+    bookings:[['ref','Ref'],['naira','Amount ₦'],['status','Status'],['history','Status history']],
+    notifications:[['to','To'],['channel','Channel'],['template','Template'],['status','Status'],['body','Message']],
+    audit:[['action','Action'],['target','Target'],['actor','Actor'],['at','Time']],
+  }[curTab];
+  box.innerHTML='<table><thead><tr>'+cols.map(c=>`<th>${c[1]}</th>`).join('')+'</tr></thead><tbody>'+
+    rows.map(r=>'<tr>'+cols.map(c=>{
+      let v=r[c[0]];
+      if(Array.isArray(v))v=v.join(' → ');
+      if(c[0]==='status')return `<td><span class="pill p-${esc(v)}">${esc(v)}</span></td>`;
+      return `<td>${esc(v)}</td>`;
+    }).join('')+'</tr>').join('')+'</tbody></table>';
+}
+async function refresh(){
+  try{
+    cache=await (await fetch('/dev/recent/')).json();
+    draw();
+    stats(await (await fetch('/dev/state/')).json());
+  }catch(e){}
+}
+refresh();
+</script>
+</body>
+</html>

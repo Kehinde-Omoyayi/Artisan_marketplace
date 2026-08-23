@@ -1,0 +1,61 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{{ site_name|default:"Nigeria Artisan Marketplace" }}{% endblock %}</title>
+  <meta name="description" content="{% block description %}Find a vetted artisan near you — plumbers, electricians, carpenters and more. Chat to book, no app or WhatsApp required.{% endblock %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'pages/site.css' %}">
+  <link rel="stylesheet" href="{% static 'webchat/chat.css' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  {% block body %}
+  <header class="site-header">
+    <a class="brand" href="{% url 'pages:home' %}">
+      <span class="brand-mark">AM</span>
+      <span class="brand-name">{{ site_name|default:"Nigeria Artisan Marketplace" }}</span>
+    </a>
+    <button type="button" class="btn btn-accent btn-small" data-chat-open>Chat with us</button>
+  </header>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="brand-mark">AM</span>
+        <p>{{ site_name|default:"Nigeria Artisan Marketplace" }}<br>Built for Nigeria — chat-first, no app required.</p>
+      </div>
+      {% if categories %}
+      <div class="footer-categories">
+        <h4>Services</h4>
+        <ul>
+          {% for category in categories %}<li>{{ category.name }}</li>{% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+      <div class="footer-meta">
+        <h4>Trust &amp; safety</h4>
+        <ul>
+          <li>Staged ID verification (L0–L4)</li>
+          <li>Secure payments, held until the job is confirmed done</li>
+          <li>Every dispute reviewed by a person</li>
+        </ul>
+      </div>
+    </div>
+    <p class="footer-copy">© {% now "Y" %} {{ site_name|default:"Nigeria Artisan Marketplace" }}.</p>
+  </footer>
+  {% endblock %}
+
+  {% include "webchat/widget.html" %}
+  <script src="{% static 'webchat/chat.js' %}" defer
+          data-poll-interval="{{ webchat_poll_interval_ms|default:2500 }}"
+          data-resend-seconds="{{ webchat_otp_resend_seconds|default:45 }}"></script>
+</body>
+</html>

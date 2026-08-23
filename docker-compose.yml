@@ -1,0 +1,107 @@
+# Local development stack: PostGIS + Redis + web + Celery worker + Celery beat.
+# This replaces the manual's "four terminals" (Part 21) with one command:
+#
+#     docker compose up
+#
+# Then in another shell:
+#     docker compose exec web python manage.py migrate
+#     docker compose exec web python manage.py bootstrap_v2
+#     docker compose exec web python manage.py createsuperuser
+
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: artisan_v2
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 10
+
+  web:
+    build: .
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+             python manage.py bootstrap_v2 &&
+             python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      DATABASE_URL: postgis://postgres:postgres@db:5432/artisan_v2
+      REDIS_URL: redis://redis:6379/0
+      DEBUG: "True"
+      SECRET_KEY: docker-compose-local-development-key-not-for-production
+      ALLOWED_HOSTS: localhost,127.0.0.1,0.0.0.0,web
+      ENABLE_DEV_CONSOLE: "True"
+      WHATSAPP_APP_SECRET: local-dev-app-secret
+      WHATSAPP_VERIFY_TOKEN: local-verify-token
+      WHATSAPP_TOKEN: local-dev-token
+      WHATSAPP_PHONE_NUMBER_ID: "000000000000000"
+      PAYSTACK_SECRET_KEY: sk_test_localdevelopmentkey
+      EMAIL_BACKEND: django.core.mail.backends.console.EmailBackend
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  worker:
+    build: .
+    command: celery -A config worker --loglevel=info
+    volumes:
+      - .:/app
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      DATABASE_URL: postgis://postgres:postgres@db:5432/artisan_v2
+      REDIS_URL: redis://redis:6379/0
+      DEBUG: "True"
+      SECRET_KEY: docker-compose-local-development-key-not-for-production
+      WHATSAPP_APP_SECRET: local-dev-app-secret
+      PAYSTACK_SECRET_KEY: sk_test_localdevelopmentkey
+    depends_on:
+      - db
+      - redis
+
+  beat:
+    build: .
+    command: celery -A config beat --loglevel=info
+    volumes:
+      - .:/app
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      DATABASE_URL: postgis://postgres:postgres@db:5432/artisan_v2
+      REDIS_URL: redis://redis:6379/0
+      DEBUG: "True"
+      SECRET_KEY: docker-compose-local-development-key-not-for-production
+      WHATSAPP_APP_SECRET: local-dev-app-secret
+      PAYSTACK_SECRET_KEY: sk_test_localdevelopmentkey
+    depends_on:
+      - db
+      - redis
+
+volumes:
+  pgdata:

@@ -1,0 +1,14 @@
+# GeoDjango needs GDAL/GEOS/PROJ as SYSTEM libraries (Part 3 Step 1).
+# Railway's Nixpacks builder will not install them unless you say so here.
+
+[phases.setup]
+nixPkgs = ["python313", "gcc", "gdal", "geos", "proj", "postgresql", "binutils"]
+
+[phases.install]
+cmds = ["python -m venv --copies /opt/venv && . /opt/venv/bin/activate && pip install -r requirements.txt"]
+
+[phases.build]
+cmds = ["python manage.py collectstatic --noinput"]
+
+[start]
+cmd = "gunicorn config.wsgi --bind 0.0.0.0:$PORT --workers 3 --timeout 60"

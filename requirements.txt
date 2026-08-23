@@ -1,0 +1,21 @@
+Django==5.2.17
+djangorestframework==3.16.1
+psycopg2-binary==2.9.11
+dj-database-url==3.0.1
+python-decouple==3.8
+gunicorn==23.0.0
+whitenoise==6.11.0
+requests==2.32.5
+
+# V2 — background jobs
+celery==5.5.3
+redis==6.4.0
+django-celery-beat==2.9.0
+
+# V2 — security
+django-ratelimit==4.1.0
+django-axes==8.0.0
+
+# V2 — private object storage + monitoring
+boto3==1.40.15
+sentry-sdk==2.35.0

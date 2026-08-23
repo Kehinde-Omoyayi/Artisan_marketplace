@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero">
+  <div class="hero-inner">
+    <p class="eyebrow">Nigeria-first &middot; chat-first &middot; no app needed</p>
+    <div class="signboard">
+      <h1>Find an artisan<br>you can <em>trust</em> — today.</h1>
+    </div>
+    <p class="hero-sub">
+      Tell us what you need in the chat box below. We match you with vetted
+      plumbers, electricians, carpenters and more, nearby — no WhatsApp,
+      no app download, nothing to install.
+    </p>
+    <div class="hero-actions">
+      <button type="button" class="btn btn-accent" data-chat-open data-chat-intent="customer">Start chatting →</button>
+      <button type="button" class="btn btn-ghost-light" data-chat-open data-chat-intent="artisan">I'm an artisan — register</button>
+    </div>
+    {% if categories %}
+    <div class="pill-row">
+      {% for category in categories %}<span class="pill">{{ category.name }}</span>{% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<section class="section section-sand" id="how-it-works">
+  <div class="section-inner">
+    <p class="eyebrow eyebrow-dark">How it works</p>
+    <h2 class="section-title">Three steps, start to finish</h2>
+    <ol class="steps">
+      <li class="step">
+        <span class="step-number">1</span>
+        <h3>Tell the chat what you need</h3>
+        <p>Pick a service, share your area, and drop a location pin so we can find people close to you.</p>
+      </li>
+      <li class="step">
+        <span class="step-number">2</span>
+        <h3>We match you with vetted artisans nearby</h3>
+        <p>Ranked by rating, verification level and distance — a transparent formula, not a black box. Interested artisans reply within minutes.</p>
+      </li>
+      <li class="step">
+        <span class="step-number">3</span>
+        <h3>Agree a price, get it done, pay securely</h3>
+        <p>Confirm the job in chat. Payment is held until you confirm the work is done — and every dispute is reviewed by a person, not an algorithm.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section class="section section-indigo" id="for-artisans">
+  <div class="section-inner section-inner-split">
+    <div>
+      <p class="eyebrow">For artisans</p>
+      <h2 class="section-title section-title-light">Get job offers where you already are — in the chat.</h2>
+      <p class="section-body">
+        Register in the chat box, tell us your trade and your area, and upload a
+        photo of your ID to start verification. As you take on jobs and build a
+        rating, you move up the verification ladder and get first look at more
+        work.
+      </p>
+      <div class="ladder">
+        <span class="ladder-step">L0 Phone linked</span>
+        <span class="ladder-step">L1 Profile complete</span>
+        <span class="ladder-step">L2 Government ID</span>
+        <span class="ladder-step">L3 Address verified</span>
+        <span class="ladder-step">L4 Skill reference</span>
+      </div>
+      <div class="hero-actions">
+        <button type="button" class="btn btn-accent" data-chat-open data-chat-intent="artisan">Register as an artisan →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-sand" id="trust">
+  <div class="section-inner">
+    <p class="eyebrow eyebrow-dark">Trust &amp; safety</p>
+    <h2 class="section-title">Built so both sides can trust a stranger</h2>
+    <div class="trust-grid">
+      <div class="trust-card">
+        <h3>Staged verification</h3>
+        <p>Every artisan climbs a five-level ladder — phone, profile, government ID, address, skill reference — before taking on higher-risk jobs like electrical or plumbing work.</p>
+      </div>
+      <div class="trust-card">
+        <h3>Payments held, not handed over</h3>
+        <p>Funds are only released once you confirm the job is done. Large payouts get a human check before they move.</p>
+      </div>
+      <div class="trust-card">
+        <h3>A person reviews every dispute</h3>
+        <p>Opening a dispute immediately pauses any pending payout and puts a real support case in front of staff — not a queue that resolves itself.</p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
