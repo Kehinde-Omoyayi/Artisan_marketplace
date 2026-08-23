@@ -10,3 +10,5 @@ staticfiles/
 .pytest_cache/
 .coverage
 htmlcov/
+.env.example
+.env.production.example
