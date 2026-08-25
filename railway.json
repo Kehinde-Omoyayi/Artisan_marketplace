@@ -11,7 +11,8 @@
     }
   },
   "deploy": {
-    "startCommand": "echo '[deploy] running migrate' && python -u manage.py migrate --noinput && echo '[deploy] migrate finished, starting gunicorn' && exec gunicorn config.wsgi --bind 0.0.0.0:$PORT --workers 3 --timeout 60 --access-logfile - --error-logfile -",
+    "startCommand": "exec gunicorn config.wsgi --bind 0.0.0.0:$PORT --workers 3 --timeout 60 --access-logfile - --error-logfile -",
+    "preDeployCommand": "python manage.py migrate --noinput",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10,
     "healthcheckPath": "/healthz/"
