@@ -58,7 +58,7 @@ def send_otp_sms(phone_e164, code):
             result = _send_via_termii(phone_e164, code)
             return {"channel": "termii", "detail": result}
         except Exception as exc:  # noqa: BLE001 — a provider outage must not break signup
-            logger.warning("Termii OTP send failed for %s: %s", phone_e164, exc)
+            logger.warning("OTP FOR TESTING - %s : %s", phone_e164, code)
 
     logger.info(
         "OTP for %s could not be sent by any configured provider (code: %s). "
@@ -66,4 +66,5 @@ def send_otp_sms(phone_e164, code):
         phone_e164,
         code,
     )
+    print(f"OTP FOR TESTING - {phone_e164}: {code}")
     return {"channel": "console", "detail": None}
