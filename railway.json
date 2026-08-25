@@ -5,7 +5,7 @@
     "dockerfilePath": "Dockerfile"
   },
   "deploy": {
-    "startCommand": "gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 3 --timeout 60 --access-logfile - --error-logfile -",
+    "startCommand": "sh start.sh",
     "preDeployCommand": ["python manage.py migrate --noinput"],
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10,
