@@ -17,20 +17,26 @@ GEOS_LIBRARY_PATH = config("GEOS_LIBRARY_PATH", default=None)
 # --------------------------------------------------------------------------------------
 # Core
 # --------------------------------------------------------------------------------------
+
+
 SECRET_KEY = config("SECRET_KEY", default="django-insecure-change-me-before-production")
 DEBUG = config("DEBUG", default=False, cast=bool)
 
 ALLOWED_HOSTS = config(
     "ALLOWED_HOSTS",
-    default="localhost,127.0.0.1,.railway.app",
-    cast=Csv(),
-)
-CSRF_TRUSTED_ORIGINS = config(
-    "CSRF_TRUSTED_ORIGINS",
-    default="https://*.railway.app",
+    default="localhost,127.0.0.1",
     cast=Csv(),
 )
 
+render_hostname = os.getenv("RENDER_EXTERNAL_HOSTNAME")
+if render_hostname and render_hostname not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(render_hostname)
+
+CSRF_TRUSTED_ORIGINS = config(
+    "CSRF_TRUSTED_ORIGINS",
+    default="",
+    cast=Csv(),
+)
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -232,17 +238,12 @@ if config("USE_LOCMEM_CACHE", default=False, cast=bool):
     }
 
 # Part 12 Step 3 — SMTP for the notification email fallback.
-EMAIL_BACKEND = config(
-    "EMAIL_BACKEND", default="django.core.mail.backends.smtp.EmailBackend"
-)
-EMAIL_HOST = config("EMAIL_HOST", default="")
-EMAIL_PORT = config("EMAIL_PORT", default=587, cast=int)
-EMAIL_USE_TLS = True
+EMAIL_HOST = config("EMAIL_HOST", default="smtp.gmail.com")
+EMAIL_PORT = config("EMAIL_PORT", default=465, cast=int)
+EMAIL_USE_SSL = config("EMAIL_USE_SSL", default=True, cast=bool)
+EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=False, cast=bool)
 EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
-DEFAULT_FROM_EMAIL = config(
-    "DEFAULT_FROM_EMAIL", default="no-reply@artisanmarketplace.ng"
-)
 
 # Part 18.2 — private, S3-compatible object storage (Supabase Storage / Backblaze B2).
 STORAGE_ENDPOINT_URL = config("STORAGE_ENDPOINT_URL", default="")
